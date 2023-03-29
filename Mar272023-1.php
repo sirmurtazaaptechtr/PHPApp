@@ -1,90 +1,96 @@
 <?php
-    // define variables and set to empty values
-    $nameErr = $emailErr = $genderErr = $websiteErr = null;
-    $name = $email = $gender = $comment = $website = null;
-    
-    function test_input($data) {
-        $data = trim($data);
-        $data = stripslashes($data);
-        $data = htmlspecialchars($data);
-        return $data;
-    }    
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  // define variables and set to empty values
+  $nameErr = $emailErr = $genderErr = $websiteErr = null;
+  $name = $email = $gender = $comment = $website = null;
+  
+  function test_input($data) {
+      $data = trim($data);
+      $data = stripslashes($data);
+      $data = htmlspecialchars($data);
+      return $data;
+  }    
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-        if (empty($_POST["fullName"])) {
-          $nameErr = "Name is required";
-        } else {
-          $name = test_input($_POST["fullName"]);
-          // check if name only contains letters and whitespace
-          if (!preg_match("/^[a-zA-Z-' ]*$/",$name)) {
-            $nameErr = "Only letters and white space allowed";
-          }
+      if (empty($_POST["fullName"])) {
+        $nameErr = "Name is required";
+      } else {
+        $name = test_input($_POST["fullName"]);
+        // check if name only contains letters and whitespace
+        if (!preg_match("/^[a-zA-Z-' ]*$/",$name)) {
+          $nameErr = "Only letters and white space allowed";
         }
+      }
+      
+      if (empty($_POST["email"])) {
+        $emailErr = "Email is required";
+      } else {
+        $email = test_input($_POST["email"]);
+        // check if e-mail address is well-formed
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+          $emailErr = "Invalid email format";
+        }
+      }
         
-        if (empty($_POST["email"])) {
-          $emailErr = "Email is required";
-        } else {
-          $email = test_input($_POST["email"]);
-          // check if e-mail address is well-formed
-          if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $emailErr = "Invalid email format";
-          }
+      if (empty($_POST["website"])) {
+        $website = "";
+      } else {
+        $website = test_input($_POST["website"]);
+        // check if URL address syntax is valid (this regular expression also allows dashes in the URL)
+        if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i",$website)) {
+          $websiteErr = "Invalid URL";
         }
-          
-        if (empty($_POST["website"])) {
-          $website = "";
-        } else {
-          $website = test_input($_POST["website"]);
-          // check if URL address syntax is valid (this regular expression also allows dashes in the URL)
-          if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i",$website)) {
-            $websiteErr = "Invalid URL";
-          }
-        }
-      
-        if (empty($_POST["comment"])) {
-          $comment = "";
-        } else {
-          $comment = test_input($_POST["comment"]);
-        }
-      
-        if (empty($_POST["gender"])) {
-          $genderErr = "Gender is required";
-        } else {
-          $gender = test_input($_POST["gender"]);
-        }
-    }
-    $servername = "localhost";
-    $username = "root";
-    $password = ""; 
-    $dbname = "pic";
+      }
+    
+      if (empty($_POST["comment"])) {
+        $comment = "";
+      } else {
+        $comment = test_input($_POST["comment"]);
+      }
+    
+      if (empty($_POST["gender"])) {
+        $genderErr = "Gender is required";
+      } else {
+        $gender = test_input($_POST["gender"]);
+      }
+  }
+  $servername = "localhost";
+  $username = "root";
+  $password = ""; 
+  $dbname = "pic";
 
-    // Create connection
-    $myConn = mysqli_connect($servername,$username,$password,$dbname);
-    // Check connection
-    if(!$myConn){
-        die("Connection failed: " . mysqli_connect_error());
-    }
-    else{
-        echo "Connected successfully";
-        $sql = "INSERT INTO `inquiries` (`FullName`, `Email`, `Website`, `Comment`, `Gender`) VALUES ('$name', '$email', '$website', '$comment', '$gender')";
+  // Create connection
+  $myConn = mysqli_connect($servername,$username,$password,$dbname);
+  // Check connection
+  if(!$myConn)
+  {
+    die("Connection failed: " . mysqli_connect_error());
+  }
+  else
+  {
+    echo "Connected successfully";
+    $sql = "INSERT INTO `inquiries` (`FullName`, `Email`, `Website`, `Comment`, `Gender`) VALUES ('$name', '$email', '$website', '$comment', '$gender')";
+    $result = mysqli_query($myConn, $sql);
 
-        if (mysqli_query($myConn, $sql)) {
-            echo "<br>New record created successfully";
-            echo "<h4>Your Input:</h4>";
-            echo $name;
-            echo "<br>";
-            echo $email;
-            echo "<br>";
-            echo $website;
-            echo "<br>";
-            echo $comment;
-            echo "<br>";
-            echo $gender;
-            mysqli_close($myConn);
-        } else {
-            echo "Error creating table: " . mysqli_error($myConn);
-        }
+    if ($result) 
+    {
+      echo "<br>New record created successfully";
+      echo "<h4>Your Input:</h4>";
+      echo $name;
+      echo "<br>";
+      echo $email;
+      echo "<br>";
+      echo $website;
+      echo "<br>";
+      echo $comment;
+      echo "<br>";
+      echo $gender;
+      mysqli_close($myConn);
     }
+    else 
+    {
+      echo "Error creating table: " . mysqli_error($myConn);
+    }
+  }
 ?>
 <!DOCTYPE html>
 <html lang="en">
