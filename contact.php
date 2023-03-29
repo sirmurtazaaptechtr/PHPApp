@@ -34,7 +34,7 @@
         } else {
             echo "Error creating table: " . mysqli_error($myConn);
         }
-    }    
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
