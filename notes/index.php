@@ -4,7 +4,8 @@ $insert = false;
 $update = false;
 $delete = false;
 
-include '_dbconnect.php';
+// include '_dbconnect.php';
+require '_dbconnect.php';
 
 if(isset($_GET['delete'])){
   $sno = $_GET['delete'];
