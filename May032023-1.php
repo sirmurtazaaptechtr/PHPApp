@@ -1,7 +1,9 @@
 <?php
     function writetofile($text){
         $myfile = fopen('TheText.txt','a') or die("unable to open file!");
+        fwrite($myfile,"<p>");
         fwrite($myfile,$text);
+        fwrite($myfile,"</p>");
         fclose($myfile);
         $myfile = fopen('TheText.txt','r') or die("unable to open file!");
         echo fread($myfile,filesize('TheText.txt'));
